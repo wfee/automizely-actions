@@ -1,0 +1,67 @@
+name: "SonarCube Action"
+author: "@alviezhang"
+description: ""
+
+inputs:
+  projectKey:
+    description: "projectKey in SonarCube, Usually Github reposity name"
+    required: true
+  sources:
+    description: "Comma-separated paths to directories containing source files"
+    required: true
+
+  projectBaseDir:
+    description: "SonarCube base diretory"
+    required: true
+  qualitygateWait:
+    description: "Whether Github Action wait qualitygate finish"
+    required: false
+    default: "false"
+
+  additionalArgs:
+    description: "Additional arguments would be passed to sonarcube command line"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Get branch name (merge)
+      if: ${{ github.event_name != 'pull_request' }}
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/})" >> $GITHUB_ENV
+
+    - name: SonarQube Scan
+      uses: sonarsource/sonarqube-scan-action@master
+      if: ${{ github.event_name != 'pull_request' }}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        projectBaseDir: ${{ inputs.projectBaseDir }}
+        args: >
+          -Dsonar.projectKey=${{ inputs.projectKey }}
+          -Dsonar.qualitygate.wait=${{ inputs.qualitygateWait }}
+
+          -Dsonar.branch.name=${{ env.BRANCH_NAME }}
+          ${{ inputs.additionalArgs }}
+
+    - name: SonarQube Scan On Pull Request
+      uses: sonarsource/sonarqube-scan-action@master
+      if: ${{ github.event_name == 'pull_request' }}
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        projectBaseDir: ${{ inputs.projectBaseDir }}
+        args: >
+          -Dsonar.projectKey=${{ inputs.projectKey }}
+          -Dsonar.qualitygate.wait=${{ inputs.qualitygateWait }}
+
+          -Dsonar.pullrequest.provider=github
+          -Dsonar.pullrequest.github.repository=${{ github.repository }}
+          -Dsonar.pullrequest.key=${{ github.event.number }}
+          -Dsonar.pullrequest.branch=PR
+          -Dsonar.pullrequest.base=${{ github.base_ref }}
+          ${{ inputs.additionalArgs }}
+
