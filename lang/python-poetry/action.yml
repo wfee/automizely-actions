@@ -24,7 +24,7 @@ runs:
   steps:
     - name: Install poetry
       run: |
-        curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/1.1.12/get-poetry.py | POETRY_VERSION=${{ inputs.poetry-version }} python - ${{ inputs.install-args }}
+        curl -sSL  https://install.python-poetry.org | POETRY_VERSION=${{ inputs.poetry-version }} python - ${{ inputs.install-args }}
         poetry_path=$HOME/.poetry/bin
         echo "$poetry_path" >> $GITHUB_PATH
         export PATH="$poetry_path:$PATH"
