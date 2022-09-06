@@ -1,0 +1,22 @@
+name: "AfterShip OpenAPI Generator Action"
+description: "Run the OpenAPI Generator CLI in a Github Action."
+inputs:
+  path:
+    required: true
+    description: 'Path for openapi generator run'
+  output:
+    required: true
+    description: 'Output path for code generated'
+  token:
+    required: true
+    description: 'GitHub Personal Access Token'
+branding:
+  icon: activity
+  color: blue
+runs:
+  using: "docker"
+  image: "docker://jianjungki/openapi-generator-scripts"
+  args: 
+    - ${{ inputs.path }}
+    - ${{ inputs.output }}
+    - ${{ inputs.token }}
