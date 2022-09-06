@@ -11,10 +11,8 @@ inputs:
     required: true
     description: 'GitHub Personal Access Token'
 runs:
-  using: "docker"
-  image: "docker://jianjungki/openapi-generator-scripts"
-  args: 
-    - -v
-    - ${{ inputs.path }}:/input
-    - -v
-    - ${{ inputs.output }}:/output
+  using: composite
+  steps:
+      - id: generate code
+        run: docker run --rm -v /github/workspace/${{ inputs.path }}:/input -v /github/workspace/${{ inputs.output }}:/output
+        shell: bash
