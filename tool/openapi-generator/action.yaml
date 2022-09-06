@@ -11,11 +11,10 @@ inputs:
     required: true
     description: 'GitHub Personal Access Token'
 runs:
- 
-  using: "composite"
-  steps:
-    - run: Generate Code from OpenAPI Generator Cli
-      uses: addnab/docker-run-action@v3
-      with:
-          image: jianjungki/openapi-generator-scripts
-          options: -v ${{ inputs.path }}:/input  -v ${{ inputs.output }}:/output
+  using: "docker"
+  image: "docker://jianjungki/openapi-generator-scripts"
+  args: 
+    - "-v"
+    - "${{ inputs.path }}:/input"
+    - "-v"
+    - "${{ inputs.output }}:/output"
