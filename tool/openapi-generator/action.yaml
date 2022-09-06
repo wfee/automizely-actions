@@ -14,7 +14,7 @@ runs:
   using: "docker"
   image: "docker://jianjungki/openapi-generator-scripts"
   args: 
-    - "-v"
-    - "${{ inputs.path }}:/input"
-    - "-v"
-    - "${{ inputs.output }}:/output"
+    - -v
+    - ${{ inputs.path }}:/input
+    - -v
+    - ${{ inputs.output }}:/output
