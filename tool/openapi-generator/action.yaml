@@ -10,13 +10,12 @@ inputs:
   token:
     required: true
     description: 'GitHub Personal Access Token'
-branding:
-  icon: activity
-  color: blue
 runs:
-  using: "docker"
-  image: "docker://jianjungki/openapi-generator-scripts"
-  args: 
-    - ${{ inputs.path }}
-    - ${{ inputs.output }}
-    - ${{ inputs.token }}
+ 
+  using: "composite"
+  steps:
+    - run: Generate Code from OpenAPI Generator Cli
+      uses: addnab/docker-run-action@v3
+      with:
+          image: jianjungki/openapi-generator-scripts
+          options: -v ${{ inputs.path }}:/input  -v ${{ inputs.output }}:/output
