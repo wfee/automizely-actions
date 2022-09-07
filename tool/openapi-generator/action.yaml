@@ -22,9 +22,9 @@ runs:
                 state: 'open'
               }
             );
-            const pull_generate-code = pulls.find(pull => pull.head.ref.search(/^generate-code/) >= 0); 
-            if (pull_generate-code) {
-              return pull_generate-code.head.ref
+            const pull_generate_code = pulls.find(pull => pull.head.ref.search(/^generate-code/) >= 0); 
+            if (pull_generate_code) {
+              return pull_generate_code.head.ref
             } else {
               return ""
             }
