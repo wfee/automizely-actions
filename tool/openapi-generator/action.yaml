@@ -35,7 +35,6 @@ runs:
        
        - id: intVars
          run: |
-            cd $GITHUB_WORKSPACE/${{github.event.repository.name}}
             if [ "${{steps.check-exists-pr.outputs.result}}" == "" ]; then
               BRANCH_NAME=generate-code-$(date '+%Y%m%d%H%M%S')
               git checkout -b $BRANCH_NAME
