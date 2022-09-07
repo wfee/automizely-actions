@@ -13,6 +13,6 @@ inputs:
 runs:
   using: composite
   steps:
-      - id: generate
-        run: docker run --rm -v /github/workspace/${{ inputs.path }}:/input -v /github/workspace/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
-        shell: bash
+       - id: generate
+         run: docker run --rm -v ${{ inputs.path }}:/input -v ${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+         shell: bash
