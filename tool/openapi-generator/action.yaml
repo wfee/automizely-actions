@@ -7,12 +7,35 @@ inputs:
   output:
     required: true
     description: 'Output path for code generated'
-  token:
-    required: true
-    description: 'GitHub Personal Access Token'
 runs:
   using: composite
   steps:
        - id: generate
          run: docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+         shell: bash
+       - id: commit
+         run: |
+          git add ${{ inputs.output }}
+            export git_commit=$(git status -s)
+            if [[ ${#git_commit} != 0 ]];  then
+              git config --global user.email "${{github.event.pusher.email}}" 
+              git config --global user.name "${{github.event.pusher.name}}" 
+              git commit -m ':package: [skip actions] Generate go code from api spec' 
+              git push --set-upstream origin $BRANCH_NAME --no-verify
+              echo "NEED_CREATE_PR=1" >> $GITHUB_ENV
+            else
+              echo "Skip commit"
+            fi
+         shell: bash
+       - id: push
+         run: |
+            if ("${{env.NEED_CREATE_PR}}" === "1") {
+              await github.pulls.create({
+                owner: '${{github.repository_owner}}',
+                repo: '${{github.event.repository.name}}',
+                title: ':package: [skip actions] Generate go code for openapi',
+                head: '${{env.BRANCH_NAME}}',
+                base: 'master'
+              });
+            }
          shell: bash
