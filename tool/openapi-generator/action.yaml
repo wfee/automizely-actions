@@ -10,8 +10,43 @@ inputs:
 runs:
   using: composite
   steps:
+       - id: check-exists-pr
+         uses: actions/github-script@f05a81df23035049204b043b50c3322045ce7eb3 #v3.1.1
+         with:
+          github-token: ${{github.token}}
+          script: |
+            const {data: pulls} = await github.pulls.list(
+              {
+                owner: '${{github.repository_owner}}',
+                repo: '${{github.event.repository.name}}',
+                state: 'open'
+              }
+            );
+            const pull_generate-code = pulls.find(pull => pull.head.ref.search(/^generate-code/) >= 0); 
+            if (pull_generate-code) {
+              return pull_generate-code.head.ref
+            } else {
+              return ""
+            }
+          result-encoding: string
+         shell: bash
        - id: generate
          run: docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+         shell: bash
+       
+       - id: intVars
+         run: |
+            cd $GITHUB_WORKSPACE/${{github.event.repository.name}}
+            if [ "${{steps.check-exists-pr.outputs.result}}" == "" ]; then
+              BRANCH_NAME=generate-code-$(date '+%Y%m%d%H%M%S')
+              git checkout -b $BRANCH_NAME
+            else
+              BRANCH_NAME=${{steps.check-exists-pr.outputs.result}}
+              git checkout $BRANCH_NAME
+            fi
+            echo "NEED_CREATE_PR=0" >> $GITHUB_ENV
+            echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+            echo ""
          shell: bash
        - id: commit
          run: |
