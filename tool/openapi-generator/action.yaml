@@ -29,7 +29,6 @@ runs:
               return ""
             }
           result-encoding: string
-         shell: bash
        - id: generate
          run: docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
          shell: bash
