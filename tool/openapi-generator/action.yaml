@@ -14,5 +14,5 @@ runs:
   using: composite
   steps:
        - id: generate
-         run: docker run --rm -v ${{ inputs.path }}:/input -v ${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+         run: docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
          shell: bash
