@@ -30,7 +30,9 @@ runs:
             }
           result-encoding: string
        - id: generate
-         run: docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+         run: | 
+            cd $GITHUB_WORKSPACE
+            docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
          shell: bash
        
        - id: intVars
@@ -48,7 +50,7 @@ runs:
          shell: bash
        - id: commit
          run: |
-          git add ${{ inputs.output }}
+            git add $(pwd)/${{ inputs.output }}
             export git_commit=$(git status -s)
             if [[ ${#git_commit} != 0 ]];  then
               git config --global user.email "${{github.event.pusher.email}}" 
