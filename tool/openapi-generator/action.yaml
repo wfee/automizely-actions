@@ -47,6 +47,7 @@ runs:
             cd $GITHUB_WORKSPACE
             docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
             pwd
+            ls
          shell: bash
        - id: commit
          run: |
@@ -63,14 +64,16 @@ runs:
             fi
          shell: bash
        - id: push
-         run: |
-            if ("${{env.NEED_CREATE_PR}}" === "1") {
-              await github.pulls.create({
-                owner: '${{github.repository_owner}}',
-                repo: '${{github.event.repository.name}}',
-                title: ':package: [skip actions] Generate go code for openapi',
-                head: '${{env.BRANCH_NAME}}',
-                base: 'master'
-              });
-            }
-         shell: bash
+         uses: actions/github-script@f05a81df23035049204b043b50c3322045ce7eb3 #v3.1.1
+         with:
+            github-token: ${{github.token}}
+            script: |
+              if ("${{env.NEED_CREATE_PR}}" === "1") {
+                await github.pulls.create({
+                  owner: '${{github.repository_owner}}',
+                  repo: '${{github.event.repository.name}}',
+                  title: ':package: [skip actions] Generate go code for openapi',
+                  head: '${{env.BRANCH_NAME}}',
+                  base: 'master'
+                });
+              }
