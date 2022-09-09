@@ -29,12 +29,6 @@ runs:
               return ""
             }
           result-encoding: string
-       - id: generate
-         run: | 
-            cd $GITHUB_WORKSPACE
-            docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
-         shell: bash
-       
        - id: intVars
          run: |
             if [ "${{steps.check-exists-pr.outputs.result}}" == "" ]; then
@@ -47,6 +41,12 @@ runs:
             echo "NEED_CREATE_PR=0" >> $GITHUB_ENV
             echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
             echo ""
+         shell: bash
+       - id: generate
+         run: | 
+            cd $GITHUB_WORKSPACE
+            docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jianjungki/openapi-generator-scripts:latest
+            pwd
          shell: bash
        - id: commit
          run: |
