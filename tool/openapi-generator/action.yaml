@@ -45,7 +45,7 @@ runs:
        - id: generate
          run: | 
             cd $GITHUB_WORKSPACE
-            docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jiajie99/openapi-generator-cli:latest
+            docker run --rm -v $(pwd)/${{ inputs.path }}:/input -v $(pwd)/${{ inputs.output }}:/output jiajie99/openapi-generator-scripts:latest
             pwd
             ls
          shell: bash
