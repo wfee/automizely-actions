@@ -1,0 +1,62 @@
+name: Stoplight CLI project sync git repository action
+author: hw.hou@aftership.com
+description: >
+  a git action to sync schema to stoplight,
+  - you need to set your stoplight project token in github setting and input to this action,
+  - if there are no write permission in repository setting of github_token, you need to add this in your job  
+    permissions:
+      contents: read
+      pull-requests: write
+  - if the schema is invalid this action will fail at 'Validate openapi schema' step 
+  - if the action is in a folk workflow, it will fail in 'Stoplight PR comment' step because it is denied to access write permission in Aftership repository
+
+inputs:
+  SCHEMA_FILE_PATH:
+    description: the path of schema file which you want to sync to stoplight
+    required: true
+  STOPLIGHT_TOKEN:
+    description: the stoplight CLI project token
+    required: true
+  PROJECT_URL:
+    description: your stoplight project url https://automizely.stoplight.io/docs/{project_name} for example
+    required: true
+  GITHUB_TOKEN:
+    description: enter github_token from secrets
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v2
+      with:
+        path: temp_repository
+    - name: Get branch name (merge)
+      if: github.event_name != 'pull_request'
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_REF#refs/heads/} | tr / -)" >> $GITHUB_ENV
+    - name: Get branch name (pull request)
+      if: github.event_name == 'pull_request'
+      shell: bash
+      run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
+    - name: Validate openapi schema
+      uses: thiyagu06/openapi-validator-action@7ab8f77e3488545422b7f1ba8dccbc7a54171af4  # v1
+      with:
+        filepath: temp_repository/${{inputs.SCHEMA_FILE_PATH}}
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+    - name: Push files to Stoplight
+      shell: bash
+      run: |
+        npx @stoplight/cli@6 push --ci-token ${{inputs.STOPLIGHT_TOKEN}} --directory ${{ github.workspace }}/temp_repository --branch ${{ env.BRANCH_NAME }}
+    - name: Stoplight PR comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v5
+      with:
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: '📚 🔍 API Docs preview available at ${{inputs.PROJECT_URL}}/branches/${{ env.BRANCH_NAME }}'
+          })
