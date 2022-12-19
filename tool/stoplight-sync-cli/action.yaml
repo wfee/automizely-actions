@@ -7,13 +7,9 @@ description: >
     permissions:
       contents: read
       pull-requests: write
-  - if the schema is invalid this action will fail at 'Validate openapi schema' step 
   - if the action is in a folk workflow, it will fail in 'Stoplight PR comment' step because it is denied to access write permission in Aftership repository
 
 inputs:
-  SCHEMA_FILE_PATH:
-    description: the path of schema file which you want to sync to stoplight
-    required: true
   STOPLIGHT_TOKEN:
     description: the stoplight CLI project token
     required: true
@@ -38,10 +34,6 @@ runs:
       if: github.event_name == 'pull_request'
       shell: bash
       run: echo "BRANCH_NAME=$(echo ${GITHUB_HEAD_REF} | tr / -)" >> $GITHUB_ENV
-    - name: Validate openapi schema
-      uses: thiyagu06/openapi-validator-action@7ab8f77e3488545422b7f1ba8dccbc7a54171af4  # v1
-      with:
-        filepath: temp_repository/${{inputs.SCHEMA_FILE_PATH}}
     - uses: actions/setup-node@v2
       with:
         node-version: '14'
