@@ -1,0 +1,13 @@
+name: "AfterShip Github Pull Request Title Check"
+description: "Run the OpenAPI Generator CLI in a Github Action."
+inputs:
+  regex:
+    description: "The regex for the pull request title"
+    required: false
+    default: "^(?:[A-Z]{3,5}-\d{1,9}|refactor|Revert|docs|sentry|test|ci|build|style|release|perf).*-$"
+runs:
+  using: composite
+  steps:
+      - uses: Slashgear/action-check-pr-title@v4.3.0
+        with:
+          regexp: ${{ inputs.regex }}
