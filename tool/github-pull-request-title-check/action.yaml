@@ -1,5 +1,5 @@
 name: "AfterShip Github Pull Request Title Check"
-description: "Run the OpenAPI Generator CLI in a Github Action."
+description: "Check Pull Request Title in a Github Action."
 inputs:
   regex:
     description: "The regex for the pull request title"
