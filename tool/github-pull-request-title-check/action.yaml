@@ -12,5 +12,5 @@ runs:
   using: composite
   steps:
       - name: Check Regex
-        run: ls . && ls ../ && ls ../../ && python actions/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ inputs.title }}"
+        run: ls actions && python actions/tool/github-pull-request-title-check/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ inputs.title }}"
         shell: sh
