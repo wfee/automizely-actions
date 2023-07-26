@@ -5,7 +5,7 @@ inputs:
     description: "The regex for the pull request title"
     required: false
     default: "^(?:[A-Z]{3,5}-[0-9]{1,9}|refactor|Revert|docs|sentry|test|ci|build|style|release|perf).*$"
-  need-check-rules:
+  check_rules:
       description: "The rules which branch to branch need to check pull request title format"
       required: true
 runs:
