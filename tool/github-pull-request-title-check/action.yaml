@@ -7,7 +7,7 @@ inputs:
     default: "^(?:[A-Z]{3,5}-[0-9]{1,9}|refactor|Revert|docs|sentry|test|ci|build|style|release|perf).*$"
   title:
       description: "The pull request title"
-      required: true
+      required: false
   need-check-branches:
       description: "The branches need for check the pull request title"
       required: true
