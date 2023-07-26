@@ -9,14 +9,16 @@ inputs:
       description: "The pull request title"
       required: true
   need-check-branches:
-      description: "The regex for the pull request title"
+      description: "The branches need for check the pull request title"
       required: true
-      type: string
-      is-array: true
 runs:
   using: composite
   steps:
       - name: Check Regex
-        if: ${{ contains(inputs.need-check-branches, github.base_ref) }}
+        if: ${{ contains(fromJSON(inputs.need-check-branches), github.base_ref) }}
         run: python actions/tool/github-pull-request-title-check/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}"
+        shell: sh
+
+      - name: Output
+        run: echo ${{ github.event.pull_request.title }} && echo ${{ contains(fromJSON(inputs.need-check-branches), github.base_ref) }}
         shell: sh
