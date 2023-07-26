@@ -8,9 +8,15 @@ inputs:
   title:
       description: "The pull request title"
       required: true
+  need-check-branches:
+      description: "The regex for the pull request title"
+      required: true
+      type: string
+      is-array: true
 runs:
   using: composite
   steps:
       - name: Check Regex
-        run: python automizely-actions/tool/github-pull-request-title-check/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ inputs.title }}"
+        if: ${{ contains(inputs.need-check-branches, github.base_ref) }}
+        run: python actions/tool/github-pull-request-title-check/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}"
         shell: sh
