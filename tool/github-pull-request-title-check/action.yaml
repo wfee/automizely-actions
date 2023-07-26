@@ -5,9 +5,12 @@ inputs:
     description: "The regex for the pull request title"
     required: false
     default: "^(?:[A-Z]{3,5}-[0-9]{1,9}|refactor|Revert|docs|sentry|test|ci|build|style|release|perf).*$"
+  title:
+      description: "The pull request title"
+      required: true
 runs:
   using: composite
   steps:
-      - uses: Slashgear/action-check-pr-title@v4.3.0
-        with:
-          regexp: ${{ inputs.regex }}
+      - name: Check Regex
+        run: python regex_check.py --pattern ${{ inputs.regex }} --text ${{ inputs.title }}
+        shell: sh
