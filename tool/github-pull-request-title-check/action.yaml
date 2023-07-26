@@ -5,20 +5,13 @@ inputs:
     description: "The regex for the pull request title"
     required: false
     default: "^(?:[A-Z]{3,5}-[0-9]{1,9}|refactor|Revert|docs|sentry|test|ci|build|style|release|perf).*$"
-  title:
-      description: "The pull request title"
-      required: false
-  need-check-branches:
-      description: "The branches need for check the pull request title"
+  need-check-rules:
+      description: "The rules which branch to branch need to check pull request title format"
       required: true
 runs:
   using: composite
   steps:
       - name: Check Regex
         if: ${{ contains(fromJSON(inputs.need-check-branches), github.base_ref) }}
-        run: python actions/tool/github-pull-request-title-check/regex_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}"
-        shell: sh
-
-      - name: Output
-        run: echo ${{ github.event.pull_request.title }} && echo ${{ contains(fromJSON(inputs.need-check-branches), github.base_ref) }}
+        run: python actions/tool/github-pull-request-title-check/pull_request_title_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}" --rules "${{ inputs.need-check-rules }}" --to_branch "${{ github.base_ref }}" --from_branch "${{ github.head_ref }}"
         shell: sh
