@@ -12,5 +12,5 @@ runs:
   using: composite
   steps:
       - name: Check Regex
-        run: python actions/tool/github-pull-request-title-check/pull_request_title_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}" --rules '${{ inputs.need-check-rules }}' --to_branch "${{ github.base_ref }}" --from_branch "${{ github.head_ref }}"
+        run: python automizely-actions/tool/github-pull-request-title-check/pull_request_title_check.py --pattern "${{ inputs.regex }}" --text "${{ github.event.pull_request.title }}" --rules '${{ inputs.need-check-rules }}' --to_branch "${{ github.base_ref }}" --from_branch "${{ github.head_ref }}"
         shell: sh
