@@ -12,5 +12,5 @@ runs:
   using: composite
   steps:
       - name: Check Regex
-        run: python regex_check.py --pattern \"${{ inputs.regex }}\" --text \"${{ inputs.title }}\"
+        run: python regex_check.py --c 1 --pattern \"${{ inputs.regex }}\" --text \"${{ inputs.title }}\"
         shell: sh
